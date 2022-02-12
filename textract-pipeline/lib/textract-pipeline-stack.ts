@@ -39,24 +39,39 @@ export class TextractPipelineStack extends cdk.Stack {
 
     //**********S3 Bucket******************************
     //S3 bucket for input documents and output
-    const contentBucket = new s3.Bucket(this, 'DocumentsBucket', { versioned: false});
+    const contentBucket = new s3.Bucket(this, 'DocumentsBucket', { 
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,versioned: false
+    });
 
-    const existingContentBucket = new s3.Bucket(this, 'ExistingDocumentsBucket', { versioned: false});
+    const existingContentBucket = new s3.Bucket(this, 'ExistingDocumentsBucket', {
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true, 
+      versioned: false
+    });
     existingContentBucket.grantReadWrite(s3BatchOperationsRole)
 
-    const inventoryAndLogsBucket = new s3.Bucket(this, 'InventoryAndLogsBucket', { versioned: false});
+    const inventoryAndLogsBucket = new s3.Bucket(this, 'InventoryAndLogsBucket', {
+      removalPolicy: cdk.RemovalPolicy.DESTROY, 
+      autoDeleteObjects: true, 
+      versioned: false
+    });
     inventoryAndLogsBucket.grantReadWrite(s3BatchOperationsRole)
 
     //**********DynamoDB Table*************************
     //DynamoDB table with links to output in S3
     const outputTable = new dynamodb.Table(this, 'OutputTable', {
       partitionKey: { name: 'documentId', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'outputType', type: dynamodb.AttributeType.STRING }
+      sortKey: { name: 'outputType', type: dynamodb.AttributeType.STRING },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
     });
 
     //DynamoDB table with links to output in S3
     const documentsTable = new dynamodb.Table(this, 'DocumentsTable', {
       partitionKey: { name: 'documentId', type: dynamodb.AttributeType.STRING },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
       stream: dynamodb.StreamViewType.NEW_IMAGE
     });
 
